@@ -1,19 +1,17 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/HomePage';
+import CopyTrading from './pages/CopyTrading';
 
-import CopyTrading from "./pages/CopyTrading"
-import HomePage from "./pages/HomePage"
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/copy-trading" element={<CopyTrading />} />
+            </Routes>
+        </Router>
+    );
+};
 
-
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/copy-trading" element={<CopyTrading />} />
-      </Routes>
-    </Router>
-  )
-}
-
-export default App
+export default App;

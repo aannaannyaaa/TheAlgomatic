@@ -1,14 +1,13 @@
 from rest_framework import viewsets, status
-from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.contrib.auth import authenticate
-from .models import CustomUser, Trade
-from .serializers import CustomUserSerializer, TradeSerializer
-import pyotp
+from rest_framework.response import Response
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
 
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
+class AuthViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
     @action(detail=False, methods=['post'])
     def signup(self, request):
@@ -16,9 +15,8 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             user = serializer.save()
             return Response({
-                'user_id': user.id,
-                'username': user.username,
-                'otp_secret': user.get_otp_secret()
+                "user": UserSerializer(user).data,
+                "message": "User created successfully",
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -28,25 +26,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         password = request.data.get('password')
         user = authenticate(username=username, password=password)
         if user:
+            login(request, user)
             return Response({
-                'user_id': user.id,
-                'username': user.username,
-                'message': 'Authentication successful. Please enter OTP.'
+                "user": UserSerializer(user).data,
+                "message": "Login successful",
             })
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-    @action(detail=False, methods=['post'])
-    def verify_otp(self, request):
-        user_id = request.data.get('user_id')
-        otp = request.data.get('otp')
-        try:
-            user = CustomUser.objects.get(id=user_id)
-            if user.verify_otp(otp):
-                return Response({'message': 'OTP verified successfully'})
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
-        except CustomUser.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-class TradeViewSet(viewsets.ModelViewSet):
-    queryset = Trade.objects.all()
-    serializer_class = TradeSerializer
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)

@@ -2,11 +2,12 @@ import React from 'react';
 import HomeNavbar from '../components/HomeNavbar';
 import bg1 from '../assets/bg-1.png';
 import bg2 from '../assets/bg-2.png';
+import video from '../assets/video.mp4';
 
 const HomePage = () => {
     return (
         <div className="relative max-w-full">
-            <svg className='rotate-180' width="100%" height="140" viewBox="0 0 200 100" preserveAspectRatio="none">
+            <svg className='rotate-180' width="100%" height="100" viewBox="0 0 200 100" preserveAspectRatio="none">
                 <path d="M0,60 Q20,0 50,30 Q80,60 100,30 Q120,0 150,30 Q180,60 200,30 L200,100 L0,100 Z" fill="#ff6a88"/>
             </svg>
             
@@ -32,8 +33,8 @@ const HomePage = () => {
                     </div>
                 </header>
 
-                <div className="w-96 z-10">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/7lDN2WbWZYw" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                <div className=" ml-20 w-1/3 z-10">
+                    <video src={video} autoPlay loop muted />
                 </div>
             </div>
         </div>
